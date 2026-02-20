@@ -1,10 +1,15 @@
 <script setup>
-defineProps({
+const props = defineProps({
     product: {
         type: Object,
         required: true
     }
 })
+
+const buyEmit = defineEmits(['buy'])
+const handleBuy = () => {
+    buyEmit('buy', props.product.id)
+}
 </script>
 
 <template>
@@ -22,7 +27,7 @@ defineProps({
       <p>{{ product.description }}</p>
       <div class="card-actions justify-between items-center">
         <div class="text-lg font-bold">${{ product.price }}</div>
-        <button class="btn btn-primary btn-sm" @click.prevent="$event.stopPropagation()">
+        <button class="btn btn-primary btn-sm" :disabled="product.stock === 0" @click.prevent="handleBuy">
           Buy Now
         </button>
       </div>

@@ -1,6 +1,15 @@
 <script setup>
 import products from '../data/products.js'
 import ProductCard from '../components/ProductCard.vue'
+
+
+
+const handleBuyProduct = (productId) => {
+  const productIndex = products.value.findIndex(p => p.id === productId)
+  if (productIndex !== -1 && products.value[productIndex].stock > 0) {
+    products.value[productIndex].stock--
+  }
+}
 </script>
 
 <template>
@@ -11,6 +20,7 @@ import ProductCard from '../components/ProductCard.vue'
         v-for="product in products"
         :key="product.id"
         :product="product"
+        @buy="handleBuyProduct"
       />
     </div>
   </div>

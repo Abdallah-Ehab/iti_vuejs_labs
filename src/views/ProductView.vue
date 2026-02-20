@@ -8,17 +8,15 @@ import CarouselBanner from '../components/CarouselBanner.vue'
 const route = useRoute()
 
 
-const products = ref([...productsData.value])
-
 const currentProduct = computed(() => {
   const productId = parseInt(route.params.id)
-  return products.value.find(product => product.id === productId) || products.value[0]
+  return productsData.value.find(product => product.id === productId) || productsData.value[0]
 })
 
 const handleBuyProduct = (productId) => {
-  const productIndex = products.value.findIndex(p => p.id === productId)
-  if (productIndex !== -1 && products.value[productIndex].stock > 0) {
-    products.value[productIndex].stock--
+  const productIndex = productsData.value.findIndex(p => p.id === productId)
+  if (productIndex !== -1 && productsData.value[productIndex].stock > 0) {
+    productsData.value[productIndex].stock--
   }
 }
 </script>

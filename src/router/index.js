@@ -8,23 +8,23 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomeView,
+    component: () => import('../views/HomeView.vue'),
   },
   {
     path: '/product/:id',
     name: 'Product',
-    component: ProductView,
+    component: () => import('../views/ProductView.vue'),
     props: true,
   },
   {
     path: '/about',
     name: 'About',
-    component: AboutView,
+    component: () => import('../views/AboutView.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: NotFound,
+    component: () => import('../views/NotFound.vue'),
   },
 ]
 

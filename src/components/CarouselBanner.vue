@@ -9,6 +9,8 @@ const filteredProducts = computed(() => {
   const currentProductId = parseInt(route.params.id)
   return products.value.filter(product => product.id !== currentProductId)
 })
+
+I'm task_3
 </script>
 
 <template>

@@ -1,4 +1,6 @@
 <script setup>
+import { useCartStore } from '../../stores/UseCartStore'
+
 const props = defineProps({
     product: {
         type: Object,
@@ -6,9 +8,15 @@ const props = defineProps({
     }
 })
 
-const buyEmit = defineEmits(['buy'])
-const handleBuy = () => {
-    buyEmit('buy', props.product.id)
+const cartStore = useCartStore()
+
+const handleAddToCart = async () => {
+  try {
+    await cartStore.addToCart(props.product)
+  } catch (error) {
+    console.error('Failed to add product to cart:', error)
+    // Could show a toast notification here
+  }
 }
 </script>
 
@@ -17,19 +25,26 @@ const handleBuy = () => {
     <figure>
       <img
         :src="product.image"
-        :alt="product.name" />
+        :alt="product.imageAlt" />
     </figure>
     <div class="card-body">
       <h2 class="card-title">
-        {{ product.name }}
-        <div v-if="product.badge" class="badge badge-secondary">{{ product.badge }}</div>
+        {{ product.title }}
+        <div v-for="tag in product.tags" :key="tag" class="badge badge-secondary">{{ tag }}</div>
       </h2>
       <p>{{ product.description }}</p>
       <div class="card-actions justify-between items-center">
-        <div class="text-lg font-bold">${{ product.price }}</div>
-        <button class="btn btn-primary btn-sm" :disabled="product.stock === 0" @click.prevent="handleBuy">
-          Buy Now
+        <div class="text-lg font-bold">${{ product.price.toFixed(2) }}</div>
+        <button
+          class="btn btn-primary btn-sm"
+          :disabled="product.stock === 0"
+          @click.prevent="handleAddToCart"
+        >
+          {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
         </button>
+      </div>
+      <div v-if="product.stock <= 5" class="text-sm text-orange-600">
+        Only {{ product.stock }} left in stock!
       </div>
     </div>
   </RouterLink>

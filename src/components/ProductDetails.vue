@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue'
+import { useCartStore } from '../../stores/UseCartStore'
 
 const props = defineProps({
   product: {
@@ -8,7 +9,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['buy-product'])
+const cartStore = useCartStore()
 
 const discountedPrice = computed(() => {
   if (props.product.discount > 0) {
@@ -21,9 +22,14 @@ const hasDiscount = computed(() => {
   return props.product.discount > 0
 })
 
-const handleBuyNow = () => {
+const handleBuyNow = async () => {
   if (props.product.stock > 0) {
-    emit('buy-product', props.product.id)
+    try {
+      await cartStore.addToCart(props.product)
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+      // Could show a toast notification here
+    }
   }
 }
 
@@ -40,11 +46,11 @@ onUnmounted(() => {
     <div class="hero-content flex-col lg:flex-row">
       <img
         :src="product.image"
-        :alt="product.name"
+        :alt="product.imageAlt"
         class="max-w-sm rounded-lg shadow-2xl"
       />
       <div>
-        <h1 class="text-5xl font-bold">{{ product.name }}</h1>
+        <h1 class="text-5xl font-bold">{{ product.title }}</h1>
         <p class="py-6">
           {{ product.description }}
         </p>
@@ -64,7 +70,7 @@ onUnmounted(() => {
         <div class="flex items-center gap-3 mb-4">
           <button
             class="btn btn-primary"
-            @click="handleBuyNow"
+            @click.prevent="handleBuyNow"
             :disabled="product.stock === 0"
           >
             {{ product.stock > 0 ? 'Buy Now' : 'Out of Stock' }}
@@ -112,13 +118,8 @@ onUnmounted(() => {
         </div>
         <div class="flex flex-wrap gap-2">
           <div
-            v-if="product.badge"
-            class="badge text-white badge-neutral badge-outline"
-          >
-            {{ product.badge }}
-          </div>
-          <div
             v-for="tag in product.tags"
+            :key="tag"
             class="badge text-white badge-neutral"
           >
             {{ tag }}
